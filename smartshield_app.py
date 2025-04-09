@@ -40,6 +40,11 @@ input_data = pd.DataFrame([[node_id, packet_size, send_rate, neighbor_count, lat
 input_scaled = scaler.transform(input_data)
 prediction = model.predict(input_scaled)[0]
 proba = model.predict_proba(input_scaled)[0][1]
+st.set_page_config(
+    page_title="SmartShield IDS",
+    page_icon="🛡️",
+    layout="wide"
+)
 
 # ✅ Step 4: Show Results
 st.subheader("🧠 Real-Time Intrusion Prediction")
