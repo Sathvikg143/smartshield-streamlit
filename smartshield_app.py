@@ -12,7 +12,7 @@ st.title("🔐 SmartShield: ML-based Intrusion Detection for Wireless Networks")
 # ✅ Step 1: Load and preprocess the dataset
 @st.cache_data
 def load_and_prepare_data():
-    df = pd.read_csv("network_traffic.csv")
+    df = pd.read_csv("ISS.csv")
     X = df.drop("label", axis=1)
     y = df["label"]
     scaler = StandardScaler()
