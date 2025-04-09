@@ -12,7 +12,7 @@ st.title("🔐 SmartShield: ML-based Intrusion Detection for Wireless Networks")
 # ✅ Step 1: Load and preprocess the dataset
 @st.cache_data
 def load_and_prepare_data():
-    df = pd.read_csv("ISS.csv")  # 🔁 UPDATED FILE NAME
+    df = pd.read_csv("ISS.csv")
     X = df.drop("label", axis=1)
     y = df["label"]
     scaler = StandardScaler()
@@ -20,7 +20,7 @@ def load_and_prepare_data():
     return df, X, y, X_scaled, scaler
 
 df, X, y, X_scaled, scaler = load_and_prepare_data()
-y = np.array(y)  # ✅ Fix ValueError: cannot set WRITEABLE flag
+y = np.array(y)  #Fix writeable flag issue
 
 # ✅ Step 2: Train the model
 model = RandomForestClassifier(n_estimators=100, random_state=42)
@@ -41,13 +41,29 @@ input_scaled = scaler.transform(input_data)
 prediction = model.predict(input_scaled)[0]
 proba = model.predict_proba(input_scaled)[0][1]
 
-# ✅ Step 4: Show Results
+# ✅ Step 4: Show Results with Attack Type Classification
 st.subheader("🧠 Real-Time Intrusion Prediction")
 st.write("**Input Data**:")
 st.dataframe(input_data)
 
 if prediction == 1:
     st.error(f"🚨 Intrusion Detected! (Confidence: {proba:.2f})")
+
+    # 🔍 Classify type of attack using feature-based logic
+    attack_type = "Unknown"
+    if send_rate > 30 and packet_size > 150:
+        attack_type = "Flooding / DoS"
+    elif send_rate < 2 and latency > 50:
+        attack_type = "Blackhole"
+    elif neighbor_count > 8 and latency > 60:
+        attack_type = "Sinkhole / Wormhole"
+    elif packet_size > 200 and send_rate > 20:
+        attack_type = "Data Injection"
+    elif node_id in [0, 9999]:
+        attack_type = "Spoofing"
+
+    st.warning(f"🔍 Likely Attack Type: **{attack_type}**")
+
 else:
     st.success(f"✅ Normal Behavior Detected (Confidence: {1 - proba:.2f})")
 
